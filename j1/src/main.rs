@@ -3,6 +3,7 @@ use std::io;
 
 fn main() -> io::Result<()> {
     let content = fs::read_to_string("input.txt")?;
+
     let lignes: Vec<&str> = content.lines().collect();
 
     let mut liste1 = Vec::new();
