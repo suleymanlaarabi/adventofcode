@@ -10,9 +10,6 @@ impl Scanner {
             characters: characters.into().chars().collect(),
         }
     }
-    pub fn cursor(&self) -> usize {
-        self.cursor
-    }
     pub fn peek(&self) -> Option<&char> {
         self.characters.get(self.cursor)
     }
@@ -28,35 +25,7 @@ impl Scanner {
             None => None,
         }
     }
-    pub fn take(&mut self, target: &char) -> bool {
-        if let Some(c) = self.peek() {
-            if c == target {
-                self.cursor += 1;
-                return true;
-            }
-        }
-        return false;
-    }
-    pub fn take_if(&mut self, predicate: fn(&char) -> bool) -> bool {
-        if let Some(c) = self.peek() {
-            if predicate(c) {
-                return true;
-            }
-        }
-        false
-    }
-    pub fn transform<T>(&mut self, cb: impl FnOnce(&char) -> Option<T>) -> Option<T> {
-        match self.peek() {
-            Some(value) => match cb(&value) {
-                Some(value) => {
-                    self.cursor += 1;
-                    Some(value)
-                }
-                None => None,
-            },
-            None => None,
-        }
-    }
+
     pub fn skip_n(&mut self, n: usize) {
         self.cursor += n;
     }
@@ -69,45 +38,6 @@ impl Scanner {
             return true;
         }
         false
-    }
-
-    pub fn skip(&mut self, target: &char) {
-        while let Some(value) = self.peek() {
-            if value == target {
-                self.cursor += 1;
-            } else {
-                break;
-            }
-        }
-    }
-    pub fn skip_white_space(&mut self) {
-        self.skip(&' ');
-    }
-    pub fn take_strict(&mut self, target: &str) -> bool {
-        let mut target = target.chars();
-        while let Some(value) = target.next() {
-            if let Some(c) = self.peek() {
-                if value == *c {
-                    self.cursor += 1;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-        true
-    }
-
-    pub fn skip_to_next_string(&mut self, target: &str) {
-        while let Some(c) = self.peek() {
-            if *c == target.chars().next().unwrap() {
-                if self.take_strict(target) {
-                    break;
-                }
-            }
-            self.cursor += 1;
-        }
     }
 
     pub fn take_while(&mut self, mut predicate: impl FnMut(&char) -> bool) -> String {
